@@ -5,11 +5,13 @@
   inputs,
   ...
 }:
-
+let
+  unpkgs = import inputs.unpkgs { system = pkgs.stdenv.system; };
+in
 {
   # https://devenv.sh/basics/
   env.GREET = "devenv";
-  packages = with pkgs; [
+  packages = with unpkgs; [
     sqlite
 
     # tauri所需依赖
@@ -37,7 +39,7 @@
   # https://devenv.sh/lainguages/
   languages.rust = {
     enable = true;
-    channel = "nightly";
+    channel = "stable";
     components = [
       "rustc"
       "cargo"
@@ -51,9 +53,9 @@
   };
   languages.javascript = {
     enable = true;
-    package = pkgs.nodejs_23;
-    corepack.enable = true;
-    # pnpm.enable = true;
+    package = unpkgs.nodejs-slim;
+    pnpm.enable = true;
+    pnpm.package = unpkgs.pnpm;
   };
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
@@ -65,11 +67,6 @@
   scripts.hello.exec = ''
     sqlite3 --version
     echo hello from $GREET
-  '';
-
-  scripts.init-yarn.exec = ''
-    corepack use yarn@latest
-    yarn
   '';
 
   enterShell = ''

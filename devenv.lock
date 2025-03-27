@@ -3,10 +3,10 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1742998885,
+        "lastModified": 1743025451,
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "4e56212b1781ab297b506bfca0085bb0e8ba1cfb",
+        "rev": "686aaf88c9c095fc49dadc620d1a814830c78206",
         "type": "github"
       },
       "original": {
@@ -19,7 +19,7 @@
     "fenix": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "unpkgs"
         ],
         "rust-analyzer-src": "rust-analyzer-src"
       },
@@ -115,16 +115,17 @@
         "nixpkgs": "nixpkgs",
         "pre-commit-hooks": [
           "git-hooks"
-        ]
+        ],
+        "unpkgs": "unpkgs"
       }
     },
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1742908812,
+        "lastModified": 1742968976,
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "62e7d9f0fc2a3499be2ed819c572da875e564ee0",
+        "rev": "042e6d8efb247af3f0b8d57c8f0f85964af3447b",
         "type": "github"
       },
       "original": {
@@ -132,6 +133,18 @@
         "ref": "nightly",
         "repo": "rust-analyzer",
         "type": "github"
+      }
+    },
+    "unpkgs": {
+      "locked": {
+        "lastModified": 1742984061,
+        "narHash": "sha256-bpN143rbKRnfysyE6KvtzORiuuh2u6Z6iVEoolMMSfQ=",
+        "type": "tarball",
+        "url": "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixos-unstable/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixos-unstable/nixexprs.tar.xz"
       }
     }
   },

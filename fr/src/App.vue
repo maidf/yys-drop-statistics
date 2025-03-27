@@ -127,7 +127,7 @@ export default {
 
         const addResourceType = async () => {
             if (!newResourceType.value.trim()) {
-                alert("资源名称不能为空！")
+                ElMessage("资源名称不能为空！")
                 return
             }
 
@@ -144,13 +144,13 @@ export default {
                 newResourceType.value = ""
             } catch (error) {
                 console.error("添加资源类型失败：", error)
-                alert("添加资源类型失败，请重试！")
+                ElMessage("添加资源类型失败，请重试！")
             }
         }
 
         const addActivity = async () => {
             if (!newActivity.value.trim()) {
-                alert("活动名称不能为空！")
+                ElMessage("活动名称不能为空！")
                 return
             }
 
@@ -164,18 +164,18 @@ export default {
                 newActivity.value = ""
             } catch (error) {
                 console.error("添加活动失败：", error)
-                alert("添加活动失败，请重试！")
+                ElMessage("添加活动失败，请重试！")
             }
         }
 
         const submitBatchRecords = async () => {
             if (!selectedActivity.value) {
-                alert("请选择活动！")
+                ElMessage("请选择活动！")
                 return
             }
 
-            if (staminaCost.value <= 0) {
-                alert("体力消耗必须大于 0！")
+            if (staminaCost.value < 0) {
+                ElMessage("体力消耗必须大于不能为0！")
                 return
             }
 
@@ -197,7 +197,7 @@ export default {
                     records,
                     stamina_cost: staminaCost.value,
                 })
-                ElMessage.success("批量记录提交成功！")
+                ElMessage.success("记录提交成功！")
 
                 // 清空所有资源的数量
                 batchRecords.value = batchRecords.value.map((record) => ({
@@ -207,8 +207,8 @@ export default {
                 fetchActivities()
                 fetchActivityResources(selectedActivity.value)
             } catch (error) {
-                console.error("批量提交记录失败：", error)
-                alert("批量提交记录失败，请重试！")
+                console.error("提交记录失败：", error)
+                ElMessage("提交记录失败，请重试！")
             }
         }
 
