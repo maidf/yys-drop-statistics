@@ -7,10 +7,33 @@
 }:
 
 {
+
+  outputs = {
+    myproject.front = import ./front { inherit pkgs; };
+    myproject.back = import ./back { inherit pkgs; };
+  };
+
   # https://devenv.sh/basics/
   env.GREET = "devenv";
-  packages = [
-    pkgs.sqlite
+  packages = with pkgs; [
+    sqlite
+
+    # tauri所需依赖
+    pkg-config
+    gobject-introspection
+    cargo-tauri
+    at-spi2-atk
+    atkmm
+    cairo
+    gdk-pixbuf
+    glib
+    gtk3
+    harfbuzz
+    librsvg
+    libsoup_3
+    pango
+    webkitgtk_4_1
+    openssl
   ];
 
   # https://devenv.sh/packages/
@@ -36,7 +59,7 @@
     enable = true;
     package = pkgs.nodejs_23;
     corepack.enable = true;
-    npm.enable = true;
+    yarn.enable = true;
   };
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
@@ -48,6 +71,12 @@
   scripts.hello.exec = ''
     sqlite3 --version
     echo hello from $GREET
+  '';
+
+  scripts.init-yarn.exec = ''
+    yarn set version berry
+    yarn plugin import https://raw.githubusercontent.com/stephank/yarn-plugin-nixify/main/dist/yarn-plugin-nixify.js
+    yarn
   '';
 
   enterShell = ''

@@ -1,5 +1,5 @@
 {
-  "name": "vue3-frontend",
+  "name": "front",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -19,5 +19,6 @@
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vue-tsc": "^2.2.4"
-  }
+  },
+  "packageManager": "yarn@4.7.0"
 }
