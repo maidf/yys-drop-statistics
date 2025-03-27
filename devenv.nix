@@ -7,12 +7,6 @@
 }:
 
 {
-
-  outputs = {
-    myproject.front = import ./front { inherit pkgs; };
-    myproject.back = import ./back { inherit pkgs; };
-  };
-
   # https://devenv.sh/basics/
   env.GREET = "devenv";
   packages = with pkgs; [
@@ -59,7 +53,7 @@
     enable = true;
     package = pkgs.nodejs_23;
     corepack.enable = true;
-    yarn.enable = true;
+    # pnpm.enable = true;
   };
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
@@ -74,8 +68,7 @@
   '';
 
   scripts.init-yarn.exec = ''
-    yarn set version berry
-    yarn plugin import https://raw.githubusercontent.com/stephank/yarn-plugin-nixify/main/dist/yarn-plugin-nixify.js
+    corepack use yarn@latest
     yarn
   '';
 
