@@ -13,6 +13,7 @@ in
   env.GREET = "devenv";
   packages = with unpkgs; [
     sqlite
+    cargo-watch
 
     # tauri所需依赖
     pkg-config
@@ -58,12 +59,23 @@ in
     pnpm.package = unpkgs.pnpm;
   };
   # https://devenv.sh/processes/
-  processes.cargo-watch.exec = "cargo-watch";
+  # 项目启动流程
+  processes = {
+    backend = {
+      exec = "cd back && cargo watch -x run";
+      #   process-compose.depends_on = {
+      #     opensearch.condition = "process_healthy";
+      #     postgres.condition = "process_healthy";
+      #   };
+    };
+    frontend.exec = "cd fr && pnpm dev";
+  };
 
   # https://devenv.sh/services/
   # services.postgres.enable = true;
 
   # https://devenv.sh/scripts/
+  # bash脚本
   scripts.hello.exec = ''
     sqlite3 --version
     echo hello from $GREET
