@@ -9,6 +9,7 @@ let
   unpkgs = import inputs.unpkgs { system = pkgs.stdenv.system; };
 in
 {
+
   # https://devenv.sh/basics/
   env.GREET = "devenv";
   packages = with unpkgs; [
@@ -58,6 +59,33 @@ in
     pnpm.enable = true;
     pnpm.package = unpkgs.pnpm;
   };
+
+  services.nginx = {
+    enable = true;
+    package = unpkgs.nginx;
+    httpConfig = "
+      server {
+          listen 9901;
+          server_name localhost;
+
+          root /usr/share/nginx/html;
+          index index.html;
+
+          location / {
+              try_files $uri $uri index.html;
+          }
+
+          location /api {
+              proxy_pass http://127.0.0.1:9909;
+          }
+
+          location ~* \.(js|css|png)$ {
+              expires 7d;
+          }
+      }
+    ";
+  };
+
   # https://devenv.sh/processes/
   # 项目启动流程
   processes = {
@@ -68,7 +96,9 @@ in
       #     postgres.condition = "process_healthy";
       #   };
     };
-    frontend.exec = "cd fr && pnpm dev";
+    frontend = {
+      exec = "cd fr && pnpm dev";
+    };
   };
 
   # https://devenv.sh/services/
@@ -80,6 +110,11 @@ in
     sqlite3 --version
     echo hello from $GREET
   '';
+
+  #   scripts.upng.exec = ''
+  #     cd fr
+  #     pnpm build
+  #   '';
 
   enterShell = ''
     hello

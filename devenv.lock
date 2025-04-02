@@ -3,10 +3,10 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1743025451,
+        "lastModified": 1743292849,
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "686aaf88c9c095fc49dadc620d1a814830c78206",
+        "rev": "fa5cbf91fb1f1614936997badbb6018a2fdef320",
         "type": "github"
       },
       "original": {
@@ -122,10 +122,10 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1742968976,
+        "lastModified": 1743256139,
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "042e6d8efb247af3f0b8d57c8f0f85964af3447b",
+        "rev": "fb133c8c8064d9f18f19eae8721347872f1679e4",
         "type": "github"
       },
       "original": {
@@ -137,8 +137,8 @@
     },
     "unpkgs": {
       "locked": {
-        "lastModified": 1742984061,
-        "narHash": "sha256-bpN143rbKRnfysyE6KvtzORiuuh2u6Z6iVEoolMMSfQ=",
+        "lastModified": 1743200099,
+        "narHash": "sha256-P4ENmUsMZnE/jcOBrfAOpPhSGALNIYonI3KgQDespHw=",
         "type": "tarball",
         "url": "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixos-unstable/nixexprs.tar.xz"
       },

@@ -8,8 +8,9 @@ inputs:
   unpkgs:
     url: https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixos-unstable/nixexprs.tar.xz
 
+    
 # If you're using non-OSS software, you can set allowUnfree to true.
-# allowUnfree: true
+allowUnfree: true
 
 # If you're willing to use a package that's vulnerable
 # permittedInsecurePackages:

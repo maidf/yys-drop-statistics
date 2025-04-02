@@ -1,10 +1,11 @@
 use axum::{
-    Json, Router,
     routing::{get, post},
+    Json, Router,
 };
 use rusqlite::{params, Connection, OptionalExtension, Result};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use tower_http::cors::{Any, CorsLayer};
 
 /**
  * 资源类型
@@ -49,17 +50,21 @@ async fn main() {
     let conn = establish_connection();
     create_tables(&conn).expect("Failed to create tables");
 
+    let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
+
     // 设置 Axum 路由
     let app = Router::new()
-        .route("/resource_types", post(add_resource_type).get(get_resource_types))
+        .route("/resource_types/:activity_id", get(get_resource_types)) // 按活动获取资源类型
+        .route("/resource_types/:activity_id", post(add_resource_type))
         .route("/activities", post(add_activity).get(get_activities))
         .route("/resources", post(add_resource))
         .route("/batch_resources", post(add_resources))
         .route("/statistics", get(fetch_statistics))
-        .route("/activity_resources/:activity_id", get(get_activity_resources));
+        .route("/activity_resources/:activity_id", get(get_activity_resources))
+        .layer(cors);
 
     // 启动服务器
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 9909));
     println!("Listening on {}", addr);
     axum::Server::bind(&addr).serve(app.into_make_service()).await.unwrap();
 }
@@ -99,22 +104,45 @@ fn create_tables(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-async fn add_resource_type(Json(resource_type): Json<ResourceType>) -> Json<ResourceType> {
+async fn add_resource_type(
+    axum::extract::Path(activity_id): axum::extract::Path<u32>,
+    Json(resource_type): Json<ResourceType>,
+) -> Json<ResourceType> {
     let conn = establish_connection();
+
+    // 插入资源类型
     conn.execute("INSERT INTO resource_types (name) VALUES (?1)", params![resource_type.name])
         .expect("Failed to add resource type");
 
-    let id = conn.last_insert_rowid() as u32;
-    Json(ResourceType { id: Some(id), name: resource_type.name })
+    let type_id = conn.last_insert_rowid() as u32;
+
+    // 插入资源记录，关联活动
+    conn.execute(
+        "INSERT INTO resources (type_id, amount, activity_id) VALUES (?1, 0, ?2)",
+        params![type_id, activity_id],
+    )
+    .expect("Failed to add resource record");
+
+    Json(ResourceType { id: Some(type_id), name: resource_type.name })
 }
 
-async fn get_resource_types() -> Json<Vec<ResourceType>> {
+async fn get_resource_types(
+    axum::extract::Path(activity_id): axum::extract::Path<u32>,
+) -> Json<Vec<ResourceType>> {
     let conn = establish_connection();
-    let mut stmt =
-        conn.prepare("SELECT id, name FROM resource_types").expect("Failed to prepare query");
+    let mut stmt = conn
+        .prepare(
+            "SELECT rt.id, rt.name
+             FROM resource_types rt
+             JOIN resources r ON rt.id = r.type_id
+             WHERE r.activity_id = ?1",
+        )
+        .expect("Failed to prepare query");
 
     let resource_types = stmt
-        .query_map([], |row| Ok(ResourceType { id: Some(row.get(0)?), name: row.get(1)? }))
+        .query_map([activity_id], |row| {
+            Ok(ResourceType { id: Some(row.get(0)?), name: row.get(1)? })
+        })
         .expect("Failed to execute query")
         .map(|res| res.unwrap())
         .collect();
